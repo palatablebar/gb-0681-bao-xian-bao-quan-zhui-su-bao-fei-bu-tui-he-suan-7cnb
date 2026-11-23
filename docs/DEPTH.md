@@ -29,6 +29,11 @@
 | TRAP-14 | 同版冲突 | 最后覆盖 | 整组隔离 | `app/modules/m2_mapping/rules.py` | `tests/test_mapping.py::test_real_conflict_quarantine` |
 | TRAP-18 | 三种空态 | 除零或伪成功 | 三个错误码 | `app/modules/m1_ingest/reader.py` | `tests/test_ingest.py::test_empty_three_states` |
 | TRAP-26 | 旧版本复核 | 覆盖新结论 | 事务条件更新 | `app/store.py` | `tests/test_archive.py::test_stale_review` |
+| TRAP-27 | 按金额复用签字 | 金额未变即沿用，来源已变未确认 | 按角色事实指纹复用 | `app/signing.py` | `tests/test_signing.py::test_source_swap_at_same_amount_requires_coverage_review` |
+| TRAP-28 | 一律重签 | 已核对批次超时 | 各层事实未变则沿用 | `app/store.py` | `tests/test_signing.py::test_amount_only_change_reuses_coverage_signature` |
+| TRAP-29 | 并发两人同批 | 后到覆盖先到 | 独立签字行+事务 | `app/store.py` | `tests/test_signing.py::test_concurrent_conflicting_opinions_keep_first` |
+| TRAP-30 | 原签字被覆盖 | 无法恢复 | 只增台账+触发器 | `app/store.py` | `tests/test_signing.py::test_signatures_are_append_only` |
+| TRAP-31 | 切换失败丢旧版 | 先删后写 | 追加发布、旧版保留 | `app/store.py` | `tests/test_signing.py::test_failed_switch_keeps_old_version` |
 | TRAP-23 | 生效日端点 | 双计生效日 | 半开区间 | `app/modules/m4_segments/rules.py` | `tests/test_segments.py::test_halfopen_conservation` |
 | TRAP-24 | 分币尾差 | 段合计不等 | 最大余额法 | `app/modules/m5_calculate/rules.py` | `tests/test_calculate.py::test_largest_remainder_conserves` |
 

@@ -5,4 +5,13 @@ async function submit(payload){if(state.busy)return;state.busy=true;feedback.tex
 document.getElementById('run').addEventListener('click',()=>submit({sample:'dirty.csv'}));
 document.getElementById('print').addEventListener('click',()=>window.print());
 const form=document.getElementById('source');if(form)form.addEventListener('submit',event=>{event.preventDefault();const csv=document.getElementById('csv').value;submit(csv?{csv}:{sample:document.getElementById('sample').value})});
-const review=document.getElementById('review');if(review)review.addEventListener('click',async()=>{try{const r=await fetch('/api/runs/'+review.dataset.run+'/review',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({version:Number(review.dataset.version),decision:'通过'})});const d=await r.json();if(!r.ok)throw new Error(d.message);feedback.textContent='签审完成 / REV '+d.review_version;review.dataset.version=d.review_version;}catch(e){feedback.textContent=e.message;}});
+document.querySelectorAll('button.sign').forEach(button=>button.addEventListener('click',async()=>{
+  try{
+    const r=await fetch('/api/runs/'+button.dataset.run+'/sign',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({role:button.dataset.role,facts:button.dataset.facts,decision:button.dataset.decision})});
+    const d=await r.json();
+    if(!r.ok)throw new Error(d.message);
+    feedback.textContent=(d.closed?'两名复核已共同确认 / ':'已记录 '+button.dataset.role+' 意见 / ')+(d.closure?('结案版本 '+d.closure.version):'待另一名复核');
+    window.location.reload();
+  }catch(e){feedback.textContent=e.message;}
+}));
